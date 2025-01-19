@@ -1,0 +1,16 @@
+{
+  "name": "Scrim-s0huajfibj",
+  "description": "https://scrimba.com/s0huajfibj/head",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.38.2",
+    "openai": "4.12.3",
+    "vite": "latest"
+  },
+  "devDependencies": {}
+}
