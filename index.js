@@ -1,10 +1,30 @@
-import main from './logic.js'
-
 const form = document.querySelector('form')
 const resultDiv = document.getElementsByClassName('result')[0]
 
 document.getElementById('submit-btn').addEventListener('click', handleSubmit)
 document.getElementById('restart-btn').addEventListener('click', handleRestart)
+
+async function main(input) {
+    try {
+        const response = await fetch('https://popchoice-worker.noamguterman.workers.dev', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: input })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.response;
+    } catch (error) {
+        console.error('Error:', error);
+        return 'Sorry, there was an error getting your movie recommendation. Please try again.';
+    }
+}
 
 async function renderResult(input) {
     const resultTextEl = document.getElementById('ai-output')
@@ -14,9 +34,15 @@ async function renderResult(input) {
     resultTitle.classList.add('hide')
     restartBtn.classList.add('hide')
     resultTextEl.textContent = 'Loading...'
-    resultTextEl.textContent = await main(input)
-    resultTitle.classList.remove('hide')
-    restartBtn.classList.remove('hide')
+    
+    try {
+        resultTextEl.textContent = await main(input)
+    } catch (error) {
+        resultTextEl.textContent = 'Sorry, there was an error. Please try again.'
+    } finally {
+        resultTitle.classList.remove('hide')
+        restartBtn.classList.remove('hide')
+    }
 }
 
 function handleSubmit(e) {
@@ -35,6 +61,7 @@ function handleSubmit(e) {
     if (!userFav.value || !userMood.value || !userFun.value) {
         invalidFormMsg.classList.remove('hide')
     } else {
+        invalidFormMsg.classList.add('hide')
         renderResult(userFullInput)
         
         userFav.value = ''
